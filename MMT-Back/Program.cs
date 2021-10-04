@@ -7,9 +7,6 @@ using MMT_Back.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-
 var connectionString = builder.Configuration.GetConnectionString("SqlConnection") ?? "Data Source=todos.db";
 
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
@@ -21,6 +18,7 @@ builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc("v1", new OpenApiInfo()
 	Version = "v1",
 
 }));
+builder.Services.AddCors();
 
 
 var app = builder.Build();
@@ -31,16 +29,24 @@ app.UseSwagger();
 /// </summary>
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/user/{id}", async ([FromServices] DatabaseContext dbContext, int id) =>
-{
-	return await dbContext.Users.FindAsync(id) is User user ? Results.Ok(user) : Results.NotFound();
-});
-
 PlaceController.addMapping(app);
+UserController.addMapping(app);
+InvitationController.addMapping(app);
+FriendshipController.addMapping(app);
+EventController.addMapping(app);
 
 app.UseSwaggerUI(c =>
 {
 	c.SwaggerEndpoint("/swagger/v1/swagger.json", "Todo Api v1");
 	c.RoutePrefix = string.Empty;
 });
+
+app.UseCors(builder =>
+{
+	builder
+	.AllowAnyOrigin()
+	.AllowAnyMethod()
+	.AllowAnyHeader();
+});
+
 app.Run();

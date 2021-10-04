@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MMT_Back.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20211001205548_Initial")]
-    partial class Initial
+    [Migration("20211004213536_UpdateInvitationModel")]
+    partial class UpdateInvitationModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,35 +23,6 @@ namespace MMT_Back.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("MMT_Back.EntityModels.ApplicationUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            UserName = "Flo"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            UserName = "Angie"
-                        });
-                });
 
             modelBuilder.Entity("MMT_Back.EntityModels.Friend", b =>
                 {
@@ -93,14 +64,14 @@ namespace MMT_Back.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("InvitedUserId")
+                    b.Property<int>("InvitedUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("StatusCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserEventId")
+                    b.Property<int>("UserEventId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -147,6 +118,35 @@ namespace MMT_Back.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MMT_Back.EntityModels.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            UserName = "Flo"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            UserName = "Angie"
+                        });
+                });
+
             modelBuilder.Entity("MMT_Back.EntityModels.UserEvent", b =>
                 {
                     b.Property<int>("Id")
@@ -162,10 +162,10 @@ namespace MMT_Back.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EventPlaceId")
+                    b.Property<int>("EventPlaceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RequesterUserId")
+                    b.Property<int>("RequesterUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -179,13 +179,13 @@ namespace MMT_Back.Migrations
 
             modelBuilder.Entity("MMT_Back.EntityModels.Friend", b =>
                 {
-                    b.HasOne("MMT_Back.EntityModels.ApplicationUser", "RequestedBy")
+                    b.HasOne("MMT_Back.EntityModels.User", "RequestedBy")
                         .WithMany("SentFriendRequests")
                         .HasForeignKey("RequestedById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MMT_Back.EntityModels.ApplicationUser", "RequestedTo")
+                    b.HasOne("MMT_Back.EntityModels.User", "RequestedTo")
                         .WithMany("ReceievedFriendRequests")
                         .HasForeignKey("RequestedToId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -198,13 +198,17 @@ namespace MMT_Back.Migrations
 
             modelBuilder.Entity("MMT_Back.EntityModels.Invitation", b =>
                 {
-                    b.HasOne("MMT_Back.EntityModels.ApplicationUser", "InvitedUser")
+                    b.HasOne("MMT_Back.EntityModels.User", "InvitedUser")
                         .WithMany()
-                        .HasForeignKey("InvitedUserId");
+                        .HasForeignKey("InvitedUserId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
 
                     b.HasOne("MMT_Back.EntityModels.UserEvent", "UserEvent")
                         .WithMany()
-                        .HasForeignKey("UserEventId");
+                        .HasForeignKey("UserEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("InvitedUser");
 
@@ -215,18 +219,22 @@ namespace MMT_Back.Migrations
                 {
                     b.HasOne("MMT_Back.EntityModels.Place", "EventPlace")
                         .WithMany()
-                        .HasForeignKey("EventPlaceId");
+                        .HasForeignKey("EventPlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("MMT_Back.EntityModels.ApplicationUser", "RequesterUser")
+                    b.HasOne("MMT_Back.EntityModels.User", "RequesterUser")
                         .WithMany()
-                        .HasForeignKey("RequesterUserId");
+                        .HasForeignKey("RequesterUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("EventPlace");
 
                     b.Navigation("RequesterUser");
                 });
 
-            modelBuilder.Entity("MMT_Back.EntityModels.ApplicationUser", b =>
+            modelBuilder.Entity("MMT_Back.EntityModels.User", b =>
                 {
                     b.Navigation("ReceievedFriendRequests");
 

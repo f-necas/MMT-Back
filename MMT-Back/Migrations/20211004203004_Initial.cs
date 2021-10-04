@@ -72,9 +72,9 @@ namespace MMT_Back.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EventName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RequesterUserId = table.Column<int>(type: "int", nullable: true),
+                    RequesterUserId = table.Column<int>(type: "int", nullable: false),
                     EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EventPlaceId = table.Column<int>(type: "int", nullable: true)
+                    EventPlaceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,12 +83,14 @@ namespace MMT_Back.Migrations
                         name: "FK_UserEvents_Place_EventPlaceId",
                         column: x => x.EventPlaceId,
                         principalTable: "Place",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserEvents_Users_RequesterUserId",
                         column: x => x.RequesterUserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

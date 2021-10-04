@@ -9,10 +9,12 @@ namespace MMT_Back.EntityModels
         [Required]
         public string EventName {  get; set; }
         [Required]
+        public int RequesterUserId {  get; set; }
         public User RequesterUser {  get; set; }
         [Required]
         public DateTime EventDate {  get; set; }
         [Required]
+        public int EventPlaceId { get; set; }
         public Place EventPlace {  get; set; }
     }
 }

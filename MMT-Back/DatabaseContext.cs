@@ -30,6 +30,9 @@ public class DatabaseContext : DbContext
             .WithMany(b => b.ReceievedFriendRequests)
             .HasForeignKey(c => c.RequestedToId).IsRequired().OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Invitation>().HasOne(c => c.InvitedUser)
+                .WithMany().OnDelete(DeleteBehavior.ClientNoAction);
+
         var wattabloc = new Place
         {
             Id = 1,
