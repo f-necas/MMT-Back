@@ -10,12 +10,12 @@ namespace MMT_Back.Controllers
         {
             app.MapGet("/friend/{id}", async ([FromServices] DatabaseContext dbContext, int id) => 
             { 
-                return await dbContext.Friend.Where(a => a.Approved && (a.).FirstOrDefaultAsync();
+                return await dbContext.Friend.Where(a => a.Approved).FirstOrDefaultAsync();
             });
 
             app.MapPost("/friend/add/{id}", async ([FromServices] DatabaseContext dbContext, int id) =>
             {
-                Friend.AddFriendRequest(new User(), 2);
+                Friend.AddFriendRequest(new User(), id);
                 await dbContext.SaveChangesAsync();
             });
         }

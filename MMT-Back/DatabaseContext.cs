@@ -51,8 +51,8 @@ public class DatabaseContext : DbContext
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
 
-        var flo = new User { Id = 1, UserName = "Flo" };
-        var angie = new User { Id = 2, UserName = "Angie" };
+        var flo = new User { Id = 1, UserName = "Flo", Password = "flo"};
+        var angie = new User { Id = 2, UserName = "Angie", Password = "angie" };
 
         modelBuilder.Entity<Place>().HasData(wattabloc, archimalt);
         modelBuilder.Entity<User>().HasData(flo, angie);

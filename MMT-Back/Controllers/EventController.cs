@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMT_Back.EntityModels;
 using MMT_Back.Models;
 using System.Net.Http.Formatting;
+using System.Security.Claims;
 
 namespace MMT_Back.Controllers
 {
@@ -25,9 +28,10 @@ namespace MMT_Back.Controllers
                 return await dbContext.Invitation.Where(x => x.UserEventId == id).ToListAsync();
             });
 
-            app.MapPost("/event", async ([FromServices] DatabaseContext dbContext, NewEventRequest request) =>
+            app.MapPost("/event", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async ([FromServices] DatabaseContext dbContext, NewEventRequest request, ClaimsPrincipal claimUser) =>
             {
                 UserEvent eventItem = request.eventItem;
+                eventItem.RequesterUserId = Int32.Parse(claimUser.FindFirstValue("id"));
                 IEnumerable<int> users = request.users;
                 dbContext.UserEvents.Add(eventItem);
                 await dbContext.SaveChangesAsync();

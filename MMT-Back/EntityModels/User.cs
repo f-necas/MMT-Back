@@ -13,6 +13,9 @@ namespace MMT_Back.EntityModels
         [Required]
         public string UserName {  get; set;}
 
+        [Required]
+        public string Password { get; set; }
+
         public User()
         {
             SentFriendRequests = new List<Friend>();
