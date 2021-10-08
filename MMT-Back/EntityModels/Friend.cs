@@ -22,12 +22,18 @@ namespace MMT_Back.EntityModels
         [NotMapped]
         public bool Approved => FriendRequestFlag == FriendRequestFlag.Approved;
 
-        public void AddFriendRequest(User user, User friendUser)
+        [NotMapped]
+        public bool Friendship(int user, int otherUser)
+        {
+            return (RequestedById == user && RequestedToId == otherUser) || (RequestedById == otherUser && RequestedToId == user);
+        } 
+
+        public static void AddFriendRequest(User user, int friendUser)
         {
             var friendRequest = new Friend()
             {
                 RequestedBy = user,
-                RequestedTo = friendUser,
+                RequestedToId = friendUser,
                 RequestTime = DateTime.Now,
                 FriendRequestFlag = FriendRequestFlag.None
             };

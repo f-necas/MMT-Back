@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using MMT_Back.EntityModels;
 using MMT_Back.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +20,18 @@ builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc("v1", new OpenApiInfo()
 
 }));
 builder.Services.AddCors();
+builder.Services
+	.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+	.AddJwtBearer();
+
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseSwagger();
 
 /// <summary>
