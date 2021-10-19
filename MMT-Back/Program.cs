@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using MMT_Back.Models;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,8 @@ builder.Services.AddAuthentication(opt =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
 
 var app = builder.Build();
@@ -58,11 +61,15 @@ app.UseSwagger();
 /// Hello World.
 /// </summary>
 
-app.MapGet("/", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] (ClaimsPrincipal user) =>
+app.MapGet("/", () =>
+{
+    return "Hello Unknown";
+});
+
+app.MapGet("/me", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] (ClaimsPrincipal user) =>
 {
     return "Hello " + user.FindFirstValue(ClaimTypes.Name) + ", your id is : " + user.FindFirstValue("id");
 });
-
 
 app.MapPost("/Login", [AllowAnonymous] async([FromServices]DatabaseContext dbContext, User user) =>
 {

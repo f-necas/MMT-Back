@@ -28,7 +28,7 @@ namespace MMT_Back.Controllers
                 return await dbContext.Invitation.Where(x => x.UserEventId == id).ToListAsync();
             });
 
-            app.MapPost("/event", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async ([FromServices] DatabaseContext dbContext, NewEventRequest request, ClaimsPrincipal claimUser) =>
+            app.MapPost("/event", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async ([FromServices] DatabaseContext dbContext, NewEventRequestDTO request, ClaimsPrincipal claimUser) =>
             {
                 UserEvent eventItem = request.eventItem;
                 eventItem.RequesterUserId = Int32.Parse(claimUser.FindFirstValue("id"));

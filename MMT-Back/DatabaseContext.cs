@@ -30,6 +30,9 @@ public class DatabaseContext : DbContext
             .WithMany(b => b.ReceievedFriendRequests)
             .HasForeignKey(c => c.RequestedToId).IsRequired().OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Friend>()
+            .HasAlternateKey(c => new { c.RequestedById, c.RequestedToId }).HasName("FriendUniqueAltKey");
+
         modelBuilder.Entity<Invitation>().HasOne(c => c.InvitedUser)
                 .WithMany().OnDelete(DeleteBehavior.ClientNoAction);
 

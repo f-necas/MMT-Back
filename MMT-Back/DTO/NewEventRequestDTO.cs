@@ -2,7 +2,7 @@
 
 namespace MMT_Back.Models
 {
-    public class NewEventRequest
+    public class NewEventRequestDTO
     {
         public UserEvent eventItem { get; set; }
         public IEnumerable<int> users {  get; set; }

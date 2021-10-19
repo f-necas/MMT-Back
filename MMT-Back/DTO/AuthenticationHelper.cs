@@ -29,7 +29,7 @@ namespace MMT_Back.Models
             claims: new[]
             {
                 new Claim("id", user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName)
             },
             expires: System.DateTime.Now.AddMinutes(120),
             signingCredentials: credentials);
