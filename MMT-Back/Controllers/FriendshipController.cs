@@ -21,15 +21,15 @@ namespace MMT_Back.Controllers
             {
 
                 var userId = Int32.Parse(claimUser.FindFirstValue("id"));
-                var friend = await dbContext.Friend.FirstOrDefaultAsync(f => f.RequestedById == id && f.RequestedToId == userId);
-                if (friend != null)
+                var friend = Friend.AddFriendRequest(await dbContext.Users.FindAsync(userId), id);
+                var existingFriendship = await dbContext.Friend.FirstOrDefaultAsync(f => f.RequestedById == id && f.RequestedToId == userId);
+                if (existingFriendship != null)
                 {
                     //Accept friend request
+                    existingFriendship.AcceptFriendRequest();
                     friend.AcceptFriendRequest();
-                    await dbContext.SaveChangesAsync();
-                    return Results.Accepted();
                 }
-                Friend.AddFriendRequest(await dbContext.Users.FindAsync(userId), id);
+                
                 return Results.Ok(await dbContext.SaveChangesAsync());
 
             });

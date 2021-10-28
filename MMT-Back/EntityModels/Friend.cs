@@ -22,7 +22,7 @@ namespace MMT_Back.EntityModels
         [NotMapped]
         public bool Approved => FriendRequestFlag == FriendRequestFlag.Approved;
 
-        public static void AddFriendRequest(User user, int friendUser)
+        public static Friend AddFriendRequest(User user, int friendUser)
         {
             var friendRequest = new Friend()
             {
@@ -32,6 +32,7 @@ namespace MMT_Back.EntityModels
                 FriendRequestFlag = FriendRequestFlag.None
             };
             user.SentFriendRequests.Add(friendRequest);
+            return friendRequest;
         }
         public void AcceptFriendRequest()
         {

@@ -18,10 +18,7 @@ namespace MMT_Back.Controllers
                 return await dbContext.UserEvents.Include(_ => _.RequesterUser).Include(_ => _.EventPlace).ToListAsync() ;
             });
 
-            app.MapGet("/event/{id}", async ([FromServices] DatabaseContext dbContext, int id) =>
-            {
-                return await dbContext.UserEvents.FindAsync(id) is UserEvent userEvent ? Results.Ok(userEvent) : Results.NotFound();
-            });
+            app.MapGet("/event/{id}", async ([FromServices] DatabaseContext dbContext, int id) => await dbContext.UserEvents.FindAsync(id) is UserEvent userEvent ? Results.Ok(userEvent) : Results.NotFound());
 
             app.MapGet("/event/{id}/invited", async ([FromServices] DatabaseContext dbContext, int id) =>
             {
