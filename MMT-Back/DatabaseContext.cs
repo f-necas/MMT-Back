@@ -40,14 +40,17 @@ public class DatabaseContext : DbContext
         {
             Id = 1,
             Name = "Wattabloc",
-            Address = "340 Chem. des Carrières, 73230 Saint-Alban-Leysse"
+            Address = "340 Chem. des Carrières, 73230 Saint-Alban-Leysse",
+            Coordinate = new Point(45.57528871439694, 5.9587356460298855) { SRID = 4326 }
+
         };
 
         var archimalt = new Place
         {
             Id = 2,
             Name = "Archimalt",
-            Address = "95 Rue de Bolliet, 73230 Saint-Alban-Leysse"
+            Address = "95 Rue de Bolliet, 73230 Saint-Alban-Leysse",
+            Coordinate = new Point(45.57510642776163, 5.949668211603892) { SRID = 4326 }
         };
 
         modelBuilder.Entity<User>()

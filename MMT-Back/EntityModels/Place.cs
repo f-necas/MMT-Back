@@ -1,5 +1,5 @@
-﻿using NetTopologySuite.Geometries;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using NetTopologySuite.Geometries;
 
 namespace MMT_Back.EntityModels
 {
@@ -14,7 +14,7 @@ namespace MMT_Back.EntityModels
         [Required]
         public string Address { get; set; }
 
-        // public Geometry Coordinate { get; set; }
+        public Point? Coordinate { get; set; }
 
     }
 }
