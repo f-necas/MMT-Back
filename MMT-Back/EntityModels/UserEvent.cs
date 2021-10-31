@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 
 namespace MMT_Back.EntityModels
 {
@@ -10,6 +12,7 @@ namespace MMT_Back.EntityModels
         public string EventName {  get; set; }
         [Required]
         public int RequesterUserId {  get; set; }
+        [JsonIgnore]
         public User RequesterUser {  get; set; }
         [Required]
         public DateTime EventDate {  get; set; }

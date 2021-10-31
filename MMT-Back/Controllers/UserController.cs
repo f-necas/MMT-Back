@@ -35,8 +35,14 @@ namespace MMT_Back.Controllers
             app.MapGet("/user/{id}",
                 async ([FromServices] DatabaseContext dbContext, int id) =>
                 {
-                    return await dbContext.Users.FindAsync(id) is User user ? Results.Ok(user) : Results.NotFound();
+                    return await dbContext.Users
+                            .Include(_ => _.UserEvents)
+                            .Where(_ => _.Id == id).FirstAsync()
+                        is User user
+                        ? Results.Ok(user)
+                        : Results.NotFound();
                 });
+
 
             app.MapGet("/user/friends/{id}",
                 async ([FromServices] DatabaseContext dbContext, int id, ClaimsPrincipal claimUser) =>

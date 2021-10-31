@@ -16,6 +16,7 @@ namespace MMT_Back.EntityModels
         [Required]
         public string Password { get; set; }
 
+        
         public User()
         {
             SentFriendRequests = new List<Friend>();
@@ -23,6 +24,8 @@ namespace MMT_Back.EntityModels
         }
 
         //public byte[] ProfilePicture { get; set; }
+        public ICollection<UserEvent> UserEvents { get; set; }
+        public ICollection<Invitation> Invitations { get; set; }
 
         public virtual ICollection<Friend> SentFriendRequests { get; set; }
 

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using MMT_Back.Models;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,10 +47,6 @@ builder.Services.AddAuthentication(opt =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddControllers();
-builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
-
 
 var app = builder.Build();
 app.UseAuthentication();

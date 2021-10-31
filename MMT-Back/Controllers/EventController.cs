@@ -13,55 +13,65 @@ namespace MMT_Back.Controllers
     {
         public static void addMapping(WebApplication app)
         {
-            app.MapGet("/event", async ([FromServices] DatabaseContext dbContext) =>
-            {
-                return await dbContext.UserEvents.Include(_ => _.RequesterUser).Include(_ => _.EventPlace).ToListAsync() ;
-            });
-
-            app.MapGet("/event/{id}", async ([FromServices] DatabaseContext dbContext, int id) => await dbContext.UserEvents.FindAsync(id) is UserEvent userEvent ? Results.Ok(userEvent) : Results.NotFound());
-
-            app.MapGet("/event/{id}/invited", async ([FromServices] DatabaseContext dbContext, int id) =>
-            {
-                return await dbContext.Invitation.Where(x => x.UserEventId == id).ToListAsync();
-            });
-
-            app.MapPost("/event", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async ([FromServices] DatabaseContext dbContext, NewEventRequestDTO request, ClaimsPrincipal claimUser) =>
-            {
-                UserEvent eventItem = request.eventItem;
-                eventItem.RequesterUserId = Int32.Parse(claimUser.FindFirstValue("id"));
-                IEnumerable<int> users = request.users;
-                dbContext.UserEvents.Add(eventItem);
-                await dbContext.SaveChangesAsync();
-
-                Invitation invitationItem;
-                foreach (int user in users)
+            app.MapGet("/event",
+                async ([FromServices] DatabaseContext dbContext) =>
                 {
-                    invitationItem = new Invitation();
-                    invitationItem.StatusCode = "SENT";
-                    invitationItem.InvitedUserId = user;
-                    invitationItem.UserEventId = eventItem.Id;
-                    dbContext.Invitation.Add(invitationItem);
-                    //TODO better insert
+                    return await dbContext.UserEvents.Include(_ => _.RequesterUser).Include(_ => _.EventPlace)
+                        .ToListAsync();
+                });
+
+            app.MapGet("/event/{id}", async ([FromServices] DatabaseContext dbContext, int id) =>
+            {
+                return await dbContext.UserEvents
+                    .Select(_ => new {userevent = _, username = _.RequesterUser.UserName}).FirstOrDefaultAsync();
+            });
+
+            app.MapGet("/event/{id}/invited",
+                async ([FromServices] DatabaseContext dbContext, int id) =>
+                {
+                    return await dbContext.Invitation.Where(x => x.UserEventId == id).ToListAsync();
+                });
+
+            app.MapPost("/event", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+                async ([FromServices] DatabaseContext dbContext, NewEventRequestDTO request,
+                    ClaimsPrincipal claimUser) =>
+                {
+                    UserEvent eventItem = request.eventItem;
+                    eventItem.RequesterUserId = Int32.Parse(claimUser.FindFirstValue("id"));
+                    IEnumerable<int> users = request.users;
+                    dbContext.UserEvents.Add(eventItem);
                     await dbContext.SaveChangesAsync();
-                }
 
-                
-                return Results.Created($"/event/{eventItem.Id}", eventItem);
-            });
+                    Invitation invitationItem;
+                    foreach (int user in users)
+                    {
+                        invitationItem = new Invitation();
+                        invitationItem.StatusCode = "SENT";
+                        invitationItem.InvitedUserId = user;
+                        invitationItem.UserEventId = eventItem.Id;
+                        dbContext.Invitation.Add(invitationItem);
+                        //TODO better insert
+                        await dbContext.SaveChangesAsync();
+                    }
 
-            app.MapPut("/event/{id}", async ([FromServices] DatabaseContext dbContext, int id, UserEvent inputEventItem) =>
-            {
-                var eventItem = await dbContext.UserEvents.FindAsync(id);
-                if (eventItem == null)
+
+                    return Results.Created($"/event/{eventItem.Id}", eventItem);
+                });
+
+            app.MapPut("/event/{id}",
+                async ([FromServices] DatabaseContext dbContext, int id, UserEvent inputEventItem) =>
                 {
-                    return Results.NotFound();
-                }
+                    var eventItem = await dbContext.UserEvents.FindAsync(id);
+                    if (eventItem == null)
+                    {
+                        return Results.NotFound();
+                    }
 
-                eventItem.EventPlace = inputEventItem.EventPlace;
-                eventItem.EventDate = inputEventItem.EventDate;
-                await dbContext.SaveChangesAsync();
-                return Results.NoContent();
-            });
+                    eventItem.EventPlace = inputEventItem.EventPlace;
+                    eventItem.EventDate = inputEventItem.EventDate;
+                    await dbContext.SaveChangesAsync();
+                    return Results.NoContent();
+                });
         }
     }
 }
