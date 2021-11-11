@@ -5,7 +5,6 @@
         None,
         Approved,
         Rejected,
-        Blocked,
-        Spam
+        Blocked
     }
 }
