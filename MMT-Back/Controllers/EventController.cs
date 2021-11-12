@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMT_Back.EntityModels;
 using MMT_Back.Models;
-using System.Net.Http.Formatting;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace MMT_Back.Controllers
 {
@@ -47,7 +45,7 @@ namespace MMT_Back.Controllers
                 ClaimsPrincipal claimUser) =>
             {
                 UserEvent eventItem = request.eventItem;
-                eventItem.RequesterUserId = Int32.Parse(claimUser.FindFirstValue("id"));
+                eventItem.RequesterUserId = int.Parse(claimUser.FindFirstValue("id"));
                 IEnumerable<int> users = request.users;
                 dbContext.UserEvents.Add(eventItem);
                 await dbContext.SaveChangesAsync();
@@ -61,8 +59,9 @@ namespace MMT_Back.Controllers
                     invitationItem.UserEventId = eventItem.Id;
                     dbContext.Invitation.Add(invitationItem);
                     //TODO better insert
-                    await dbContext.SaveChangesAsync();
+                    
                 }
+                await dbContext.SaveChangesAsync();
 
 
                 return Results.Created($"/event/{eventItem.Id}", eventItem);
